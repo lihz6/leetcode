@@ -170,3 +170,93 @@ const addTwoNumbers = (l1, l2, carry = 0) => {
 ```
 
 </details>
+
+<details>
+<summary><b>3. 无重复字符的最长子串</b></summary>
+
+#### 题目描述
+
+给定一个字符串，请你找出其中不含有重复字符的**最长子串**的长度。
+
+**示例  1:**
+
+```
+输入: "abcabcbb"
+输出: 3
+解释: 因为无重复字符的最长子串是 "abc"，所以其长度为 3。
+```
+
+**示例 2:**
+
+```
+输入: "bbbbb"
+输出: 1
+解释: 因为无重复字符的最长子串是 "b"，所以其长度为 1。
+```
+
+**示例 3:**
+
+```
+输入: "pwwkew"
+输出: 3
+解释: 因为无重复字符的最长子串是 "wke"，所以其长度为 3。
+　　　请注意，你的答案必须是 子串 的长度，"pwke" 是一个子序列，不是子串。
+```
+
+> 来源：力扣（LeetCode）https://leetcode-cn.com/problems/longest-substring-without-repeating-characters/
+
+#### Rust
+
+```rust
+fn length_of_longest_substring(s: &str) -> i32 {
+    use std::cmp::max;
+    let (mut start, mut maxed, array) = (0, 0, s.as_bytes());
+    for (i, c) in array.iter().enumerate() {
+        let mut offset = start;
+        while offset < i {
+            if array[offset] == *c {
+                maxed = max(maxed, i - start);
+                start = offset + 1;
+                break;
+            }
+            offset += 1;
+        }
+    }
+    max(maxed, array.len() - start) as i32
+}
+```
+
+#### Python
+
+```python
+def length_of_longest_substring(s: str) -> int:
+    start, maxed = 0, 0
+    for i, c in enumerate(s):
+        offset = s.find(c, start, i)
+        if offset > -1:
+            maxed = max(maxed, i - start)
+            start = offset + 1
+    return max(maxed, len(s) - start)
+```
+
+#### JavaScript
+
+```javascript
+const lengthOfLongestSubstring = s => {
+  let [start, maxed] = [0, 0];
+  const array = Array.from(s);
+  for (const [i, c] of array.entries()) {
+    let offset = start;
+    while (offset < i) {
+      if (array[offset++] === c) {
+        maxed = Math.max(maxed, i - start);
+        start = offset;
+        break;
+      }
+    }
+  }
+  return Math.max(maxed, s.length - start);
+};
+```
+
+</details>
