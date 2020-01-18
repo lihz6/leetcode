@@ -65,3 +65,108 @@ const twoSum = (nums, target) => {
 ```
 
 </details>
+
+<details>
+<summary><b>2. 两数相加</b></summary>
+
+#### 题目描述
+
+给出两个**非空**的链表用来表示两个非负的整数。其中，它们各自的位数是按照**逆序**的方式存储的，并且它们的每个节点只能存储**一位**数字。
+
+如果，我们将这两个数相加起来，则会返回一个新的链表来表示它们的和。
+
+您可以假设除了数字 0 之外，这两个数都不会以 0 开头。
+
+**示例：**
+
+```
+输入：(2 -> 4 -> 3) + (5 -> 6 -> 4)
+输出：7 -> 0 -> 8
+原因：342 + 465 = 807
+```
+
+> 来源：力扣（LeetCode）https://leetcode-cn.com/problems/add-two-numbers/
+
+#### Rust
+
+```rust
+struct ListNode {
+    val: i32,
+    next: Option<Box<ListNode>>,
+}
+impl ListNode {
+    #[inline]
+    fn new(val: i32) -> Self {
+        ListNode { next: None, val }
+    }
+}
+fn add_two_numbers(
+    mut l1: Option<Box<ListNode>>,
+    mut l2: Option<Box<ListNode>>,
+) -> Option<Box<ListNode>> {
+    let mut head = Some(Box::new(ListNode::new(0)));
+    let (mut tail, mut step) = (&mut head, 0);
+    loop {
+        if l1.is_some() && l2.is_some() {
+            let val = l1.as_ref().unwrap().val + l2.as_ref().unwrap().val + step;
+            tail.as_mut().unwrap().next = Some(Box::new(ListNode::new(val % 10)));
+            tail = &mut tail.as_mut().unwrap().next;
+            l1 = l1.unwrap().next;
+            l2 = l2.unwrap().next;
+            step = val / 10;
+        } else if step > 0 {
+            l1 = l1.or(l2);
+            l2 = Some(Box::new(ListNode::new(step)));
+            step = 0;
+        } else {
+            tail.as_mut().unwrap().next = l1.or(l2);
+            break head.unwrap().next;
+        }
+    }
+}
+```
+
+#### Python
+
+```python
+class ListNode:
+    def __init__(self, x, next=None):
+        self.val = x
+        self.next = next
+
+
+def add_two_numbers(l1: ListNode, l2: ListNode, carry: int = 0) -> ListNode:
+    if l1 is None or l2 is None:
+        if not carry:
+            return l1 or l2
+        return add_two_numbers(l1 or l2, ListNode(carry), 0)
+    carry, val = divmod(l1.val + l2.val + carry, 10)
+    return ListNode(val, add_two_numbers(l1.next, l2.next, carry))
+```
+
+#### JavaScript
+
+```javascript
+class ListNode {
+  constructor(val, next = null) {
+    this.val = val;
+    this.next = next;
+  }
+}
+
+const addTwoNumbers = (l1, l2, carry = 0) => {
+  if (!l1 || !l2) {
+    if (!carry) {
+      return l1 || l2;
+    }
+    return addTwoNumbers(l1 || l2, new ListNode(carry), 0);
+  }
+  const val = l1.val + l2.val + carry;
+  return new ListNode(
+    val % 10,
+    addTwoNumbers(l1.next, l2.next, Math.floor(val / 10))
+  );
+};
+```
+
+</details>
