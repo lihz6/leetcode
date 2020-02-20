@@ -260,3 +260,153 @@ const lengthOfLongestSubstring = s => {
 ```
 
 </details>
+
+<details>
+<summary><b>4. 寻找两个有序数组的中位数</b></summary>
+
+#### 题目描述
+
+给定两个大小为 m 和 n 的有序数组 `nums1` 和 `nums2`。
+
+请你找出这两个有序数组的中位数，并且要求算法的时间复杂度为 O(log(m + n))。
+
+你可以假设 `nums1` 和 `nums2` 不会同时为空。
+
+**示例 1:**
+
+```
+nums1 = [1, 3]
+nums2 = [2]
+
+则中位数是 2.0
+```
+
+**示例 2:**
+
+```
+nums1 = [1, 2]
+nums2 = [3, 4]
+
+则中位数是 (2 + 3) / 2 = 2.5
+```
+
+> 来源：力扣（LeetCode）https://leetcode-cn.com/problems/median-of-two-sorted-arrays/
+
+#### Rust
+
+```rust
+fn median_of<'a>(mut nums1: &'a Vec<i32>, mut nums2: &'a Vec<i32>) -> f64 {
+    if nums1.len() > nums2.len() {
+        std::mem::swap(&mut nums1, &mut nums2);
+    }
+    let (l1, l2) = (nums1.len(), nums2.len());
+    let (mut s1, mut m1, mut e1, total) = (0, l1, l1, (l1 + l2 + 1) >> 1);
+    loop {
+        let m2 = total - m1;
+        if m1 > 0 && m2 < l2 && nums1[m1 - 1] > nums2[m2] {
+            e1 = m1;
+        } else {
+            if m2 > 0 && m1 < l1 && nums2[m2 - 1] > nums1[m1] {
+                s1 = m1;
+            } else {
+                let a = if m1 == 0 {
+                    nums2[m2 - 1]
+                } else if m2 == 0 {
+                    nums1[m1 - 1]
+                } else {
+                    std::cmp::max(nums1[m1 - 1], nums2[m2 - 1])
+                };
+                let b = if (l1 + l2) % 2 > 0 {
+                    a
+                } else if m1 == l1 {
+                    nums2[m2]
+                } else if m2 == l2 {
+                    nums1[m1]
+                } else {
+                    std::cmp::min(nums1[m1], nums2[m2])
+                };
+                break (a + b) as f64 / 2.0;
+            }
+        }
+        m1 = (s1 + e1) >> 1;
+    }
+}
+```
+
+#### Python
+
+```python
+def median_of(nums1, nums2):
+    if len(nums1) > len(nums2):
+        nums1, nums2 = nums2, nums1
+
+    l1, l2 = len(nums1), len(nums2)
+    s1, m1, e1, total = 0, l1, l1, (l1 + l2 + 1) >> 1
+
+    while True:
+        m2 = total - m1
+        if m1 > 0 and m2 < l2 and nums1[m1 - 1] > nums2[m2]:
+            m1, e1 = (s1 + m1) >> 1, m1
+        else:
+            if m2 > 0 and m1 < l1 and nums2[m2 - 1] > nums1[m1]:
+                s1, m1 = m1, (m1 + e1) >> 1
+            else:
+                if m1 == 0:
+                    a = nums2[m2 - 1]
+                elif m2 == 0:
+                    a = nums1[m1 - 1]
+                else:
+                    a = max(nums1[m1 - 1], nums2[m2 - 1])
+
+                if (l1 + l2) % 2:
+                    b = a
+                elif m1 == l1:
+                    b = nums2[m2]
+                elif m2 == l2:
+                    b = nums1[m1]
+                else:
+                    b = min(nums1[m1], nums2[m2])
+
+                return (a + b) / 2.0
+```
+
+#### JavaScript
+
+```javascript
+const medianOf = (nums1, nums2) => {
+  if (nums1.length > nums2.length) {
+    [nums1, nums2] = [nums2, nums1];
+  }
+  const [l1, l2] = [nums1.length, nums2.length];
+  const total = (l1 + l2 + 1) >> 1;
+  let [s1, m1, e1] = [0, l1, l1];
+  while (true) {
+    const m2 = total - m1;
+    if (m1 > 0 && m2 < l2 && nums1[m1 - 1] > nums2[m2]) {
+      [m1, e1] = [(s1 + m1) >> 1, m1];
+    } else {
+      if (m2 > 0 && m1 < l1 && nums2[m2 - 1] > nums1[m1]) {
+        [s1, m1] = [m1, (m1 + e1) >> 1];
+      } else {
+        const a =
+          m1 === 0
+            ? nums2[m2 - 1]
+            : m2 === 0
+            ? nums1[m1 - 1]
+            : Math.max(nums1[m1 - 1], nums2[m2 - 1]);
+        const b =
+          (l1 + l2) % 2
+            ? a
+            : m1 === l1
+            ? nums2[m2]
+            : m2 === l2
+            ? nums1[m1]
+            : Math.min(nums1[m1], nums2[m2]);
+        return (a + b) / 2.0;
+      }
+    }
+  }
+};
+```
+
+</details>
